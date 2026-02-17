@@ -1,6 +1,5 @@
 # Next.js File Dashboard
 
-This is a Next.js version of the dashboard component for the student assessment.
 
 ## Getting Started
 
