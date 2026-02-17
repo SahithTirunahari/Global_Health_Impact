@@ -20,12 +20,6 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000/dashboard](http://localhost:3000/dashboard) to view the new dashboard implementation.
+Open [http://localhost:3000/dashboard]  to view the new dashboard implementation.
 
-## Features
 
-- **Dashboard Page**: Displays a list of files with name, size, and upload date.
-- **API Endpoint**: Mock API at `/api/files` returning file data.
-- **Client-Side Fetching**: Uses `fetch` to retrieve data with loading states.
-- **TypeScript**: Typed interfaces for file data.
-- **Tailwind CSS**: Styled for a clean, modern look.

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///Users/sahithtirunahari/Assessment/New-Student-Test/next-app/app/api/files/route.ts"],"sourcesContent":["import { NextResponse } from 'next/server';\nimport { FileData } from '@/lib/types';\n\nconst MOCK_FILES: FileData[] = [\n    { id: 1, name: 'research_paper.pdf', size: '2.3 MB', user: 'test@example.com', 'date': '2024-01-15' },\n    { id: 2, name: 'data_analysis.csv', size: '1.1 MB', user: 'test@example.com', 'date': '2024-01-20' },\n    { id: 3, name: 'presentation.pptx', size: '5.2 MB', user: 'test@example.com', 'date': '2024-02-01' },\n    { id: 4, name: 'project_proposal.docx', size: '1.8 MB', user: 'manager@example.com', 'date': '2024-02-05' },\n];\n\nexport async function GET() {\n    await new Promise((resolve) => setTimeout(resolve, 1000));\n    return NextResponse.json(MOCK_FILES);\n}\n"],"names":[],"mappings":";;;;AAAA;;AAGA,MAAM,aAAyB;IAC3B;QAAE,IAAI;QAAG,MAAM;QAAsB,MAAM;QAAU,MAAM;QAAoB,QAAQ;IAAa;IACpG;QAAE,IAAI;QAAG,MAAM;QAAqB,MAAM;QAAU,MAAM;QAAoB,QAAQ;IAAa;IACnG;QAAE,IAAI;QAAG,MAAM;QAAqB,MAAM;QAAU,MAAM;QAAoB,QAAQ;IAAa;IACnG;QAAE,IAAI;QAAG,MAAM;QAAyB,MAAM;QAAU,MAAM;QAAuB,QAAQ;IAAa;CAC7G;AAEM,eAAe;IAClB,MAAM,IAAI,QAAQ,CAAC,UAAY,WAAW,SAAS;IACnD,OAAO,gJAAY,CAAC,IAAI,CAAC;AAC7B"}}]
+}

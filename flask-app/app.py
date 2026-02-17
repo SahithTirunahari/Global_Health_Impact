@@ -50,14 +50,11 @@ def login():
 # Anyone can access dashboard without logging in
 @app.route('/dashboard')
 def dashboard():
-    # FIXED: Added authentication check to prevent unauthorized access
     if 'email' not in session:
         return redirect(url_for('login'))
         
     email = session.get('email')
     user = USERS.get(email)
-    
-    # This will crash if email is None
     user_files = [f for f in FILES if f['user'] == email]
     
     return render_template('dashboard.html', 
@@ -73,9 +70,6 @@ def get_files():
     
     email = session['email']
     result = []
-    
-    # Optimized query: Fetch user once, filter files efficiently
-    # FIXED: Removed N+1 query by fetching user once before iterating
     current_user = USERS.get(email)
     if not current_user:
         return jsonify({'error': 'User not found'}), 404
@@ -97,7 +91,6 @@ def get_files():
 # Only checks extension, not actual file content
 @app.route('/upload', methods=['POST'])
 def upload():
-    # FIXED: Added proper file handling and extension validation
     if 'email' not in session:
         return jsonify({'error': 'Not logged in'}), 401
     
@@ -113,8 +106,6 @@ def upload():
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        
-        # Calculate size
         size_bytes = os.path.getsize(file_path)
         size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
         
@@ -141,7 +132,6 @@ def search():
     user_files = [f for f in FILES if f['user'] == email]
     
     if query:
-        # FIXED: Changed search logic to match start of filename instead of substring
         filtered = [f for f in user_files if f['name'].lower().startswith(query)]
         return render_template('dashboard.html', 
                              user=USERS.get(email),
