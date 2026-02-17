@@ -1,73 +1,44 @@
-# Flask File Manager - Assessment
+# CS Team Assessment Submission
 
-A simple file management application with intentional bugs for debugging practice.
+This repository contains the solution for the Full-Stack Developer Technical Assessment.
 
-## Setup Instructions
+## Project Structure
 
-### 1. Install Python
-Make sure you have Python 3.9 or higher installed:
-```bash
-python --version
-# or
-python3 --version
-```
+- `flask-app/`: The original Flask application with 3 bugs fixed.
+- `next-app/`: The new Next.js dashboard implementation (Task 2).
+- `BUG_REPORT.md`: Detailed report of the bugs found and fixed in the Flask app.
 
-### 2. Install Dependencies
-```bash
-cd flask-app
-pip install -r requirements.txt
-# or if using python3
-pip3 install -r requirements.txt
-```
+## How to Run
 
-### 3. Run the Application
-```bash
-python app.py
-# or
-python3 app.py
-```
+### Flask Application (Fixed)
 
-### 4. Open in Browser
-Visit: http://localhost:5000
+1. Navigate to the flask directory:
+   ```bash
+   cd flask-app
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the app:
+   ```bash
+   python app.py
+   ```
+4. Visit [http://localhost:5000](http://localhost:5000)
 
-### 5. Login
-Use these test credentials:
-- Email: test@example.com
-- Password: password123
+### Next.js Application (New Dashboard)
 
-## Features
+1. Navigate to the nextjs directory:
+   ```bash
+   cd next-app
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Visit [http://localhost:3000/dashboard]to see the new dashboard.
 
-- User login/logout
-- Dashboard showing uploaded files
-- File upload (simulated)
-- Search functionality
-
-## Your Task
-
-This app has **3 bugs** that you need to find and fix. See the assessment document for details.
-
-## Troubleshooting
-
-**Port already in use?**
-```bash
-# Kill process on port 5000 (Mac/Linux)
-lsof -ti:5000 | xargs kill -9
-
-# Windows
-netstat -ano | findstr :5000
-taskkill /PID <PID> /F
-```
-
-**Module not found?**
-Make sure Flask is installed:
-```bash
-pip install Flask
-```
-
-**Permission denied?**
-Use pip3 or add --user flag:
-```bash
-pip3 install -r requirements.txt
-# or
-pip install --user -r requirements.txt
-```

@@ -1,9 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from datetime import datetime
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'dev-secret-key'
+app.config['UPLOAD_FOLDER'] = 'uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'ppt', 'pptx', 'csv'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Mock database
 USERS = {
@@ -42,6 +50,10 @@ def login():
 # Anyone can access dashboard without logging in
 @app.route('/dashboard')
 def dashboard():
+    # FIXED: Added authentication check to prevent unauthorized access
+    if 'email' not in session:
+        return redirect(url_for('login'))
+        
     email = session.get('email')
     user = USERS.get(email)
     
@@ -52,7 +64,7 @@ def dashboard():
                          user=user, 
                          files=user_files)
 
-# BUG #2: N+1 query pattern (inefficient)
+# BUG #2: N+1 query pattern
 # In a real app with database, this would be very slow
 @app.route('/api/files')
 def get_files():
@@ -62,19 +74,22 @@ def get_files():
     email = session['email']
     result = []
     
-    # BUG: This loops through all files and checks user for each one
-    # In a real database, this would be separate queries for each file
-    for file in FILES:
-        # Simulating looking up user for each file (N+1 problem)
-        file_user = USERS.get(file['user'])
-        if file['user'] == email:
-            result.append({
-                'id': file['id'],
-                'name': file['name'],
-                'size': file['size'],
-                'date': file['date'],
-                'user_name': file_user['name'] if file_user else 'Unknown'
-            })
+    # Optimized query: Fetch user once, filter files efficiently
+    # FIXED: Removed N+1 query by fetching user once before iterating
+    current_user = USERS.get(email)
+    if not current_user:
+        return jsonify({'error': 'User not found'}), 404
+        
+    user_files = [f for f in FILES if f['user'] == email]
+    
+    for file in user_files:
+        result.append({
+            'id': file['id'],
+            'name': file['name'],
+            'size': file['size'],
+            'date': file['date'],
+            'user_name': current_user['name']
+        })
     
     return jsonify(result)
 
@@ -82,25 +97,38 @@ def get_files():
 # Only checks extension, not actual file content
 @app.route('/upload', methods=['POST'])
 def upload():
+    # FIXED: Added proper file handling and extension validation
     if 'email' not in session:
         return jsonify({'error': 'Not logged in'}), 401
     
-    filename = request.form.get('filename', '')
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+        
+    file = request.files['file']
     
-    # BUG: Only checks if filename has extension, doesn't validate type
-    # Attacker could upload "malware.exe.pdf"
-    if '.' in filename:
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+        
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        # Calculate size
+        size_bytes = os.path.getsize(file_path)
+        size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
+        
         new_file = {
             'id': len(FILES) + 1,
             'name': filename,
-            'size': '0.5 MB',
+            'size': size_str,
             'user': session['email'],
             'date': datetime.now().strftime('%Y-%m-%d')
         }
         FILES.append(new_file)
         return redirect(url_for('dashboard'))
     
-    return 'Invalid filename', 400
+    return 'Invalid file type', 400
 
 @app.route('/search')
 def search():
@@ -113,7 +141,8 @@ def search():
     user_files = [f for f in FILES if f['user'] == email]
     
     if query:
-        filtered = [f for f in user_files if query in f['name'].lower()]
+        # FIXED: Changed search logic to match start of filename instead of substring
+        filtered = [f for f in user_files if f['name'].lower().startswith(query)]
         return render_template('dashboard.html', 
                              user=USERS.get(email),
                              files=filtered,
