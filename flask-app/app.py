@@ -46,7 +46,7 @@ def login():
     
     return render_template('login.html')
 
-# BUG #1: No authentication check!
+# BUG #4: No authentication check!
 # Anyone can access dashboard without logging in
 @app.route('/dashboard')
 def dashboard():
@@ -61,7 +61,7 @@ def dashboard():
                          user=user, 
                          files=user_files)
 
-# BUG #2: N+1 query pattern
+# BUG #5: N+1 query pattern
 # In a real app with database, this would be very slow
 @app.route('/api/files')
 def get_files():
@@ -130,7 +130,7 @@ def search():
     email = session['email']
     
     user_files = [f for f in FILES if f['user'] == email]
-    
+    #BUG 2: Check the search query with the starting letters match
     if query:
         filtered = [f for f in user_files if f['name'].lower().startswith(query)]
         return render_template('dashboard.html', 
