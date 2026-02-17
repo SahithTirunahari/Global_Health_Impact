@@ -38,7 +38,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="flex items-center">
-                            <span className="text-gray-500 mr-4">test@example.com</span>
+                            <span className="text-gray-500 mr-4">Test User!</span>
                             <button
                                 onClick={() => window.location.href = '/'}
                                 className="text-gray-500 hover:text-gray-700"
